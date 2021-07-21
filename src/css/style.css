@@ -175,6 +175,11 @@ body {
     font: italic 700 20px 'Amatic SC', cursive;
 }
 
+.m-error .city-weather-title {
+    border-bottom-color: red;
+    color: red;
+}
+
 .city-weather-title:focus {
     color: blue;
     border-bottom-color: blue;

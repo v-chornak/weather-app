@@ -9,6 +9,7 @@ export default class Controller {
         this.viewLocal.subscribe('DOM-Loaded', this.onDomLoaded);
         this.viewCities.subscribe('get-weather-data', this.getWeatherData);
         this.viewCities.subscribe('change-weather-data', this.changeWeatherData);
+        this.viewCities.subscribe('update-local-storage', this.updateLocalStorage);
     }
 
     onDomLoaded = () => {
@@ -21,5 +22,9 @@ export default class Controller {
 
     changeWeatherData = (data) => {
         this.modelCities.emit('change-weather-data', data)
+    }
+
+    updateLocalStorage = (data) => {
+        this.modelCities.emit('update-local-storage', data);
     }
 }

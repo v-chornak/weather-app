@@ -9,8 +9,6 @@ export class ViewCities extends EventEmitter {
         this.error = document.getElementById('appInputError');
         this.result = document.getElementById('appResult');
 
-        this.citiesNames = []; // move to DB
-
         this.addBtn.addEventListener('click', this.getWeatherData);
         this.result.addEventListener('click', this.onResultClick);
         this.input.addEventListener('focus', this.hideError);
@@ -18,7 +16,8 @@ export class ViewCities extends EventEmitter {
         this.subscribe('show-weather', this.showCityData);
         this.subscribe('change-weather', this.changeCityData);
         this.subscribe('show-error', this.showError);
-        this.subscribe('change-error', this.showError);
+        this.subscribe('change-error', this.changeError);
+        this.subscribe('add-cities', this.addCities);
     }
 
     getWeatherData = () => {
@@ -30,15 +29,33 @@ export class ViewCities extends EventEmitter {
         this.emit('get-weather-data', this.input.value);
     }
 
-    showCityData = (data) => {
-        if (this.citiesNames.includes(data.name.toLowerCase())) {
+    addCities = (cities) => {
+        if (!cities.length) {
+            return;
+        }
+
+        cities.forEach(city => {
+            this.showCityData(city, false);
+        });
+    }
+
+    showCityData = (data, check = true) => {
+        let isAdded = false;
+
+        if (check) {
+            JSON.parse(localStorage.cities).forEach(city => {
+                if (city.name.toLowerCase() === data.name.toLowerCase()) {
+                    isAdded = true;
+                }
+            });
+        }
+
+        if (isAdded) {
             this.showError('This city already added');
             return;
         }
 
         this.input.value = '';
-        this.citiesNames.push(data.name.toLowerCase());
-        console.log(this.citiesNames);
 
         const block = document.createElement('div');
         block.classList.add('city-weather', data.weather[0].main.toLowerCase());
@@ -74,7 +91,7 @@ export class ViewCities extends EventEmitter {
 
         this.result.append(block);
 
-        // Add to DB
+        this.emit('update-local-storage', data)
     }
 
     saveCityName = (e) => {
@@ -82,16 +99,21 @@ export class ViewCities extends EventEmitter {
     }
 
     changeCityName = (e) => {
-        const cityName = this.citiesNames.includes(e.target.value.toLowerCase()) ? this.prevCityName : e.target.value.toLowerCase();
+        let arr = [];
 
-        if (cityName !== this.prevCityName) {
-            this.citiesNames.splice(this.citiesNames.indexOf(this.prevCityName), 1);
-            this.citiesNames.push(cityName);
-        }
+        e.target.parentElement.classList.remove('m-error');
+
+        JSON.parse(localStorage.cities).forEach((city) => {
+            if (city.name.toLowerCase() !== this.prevCityName) {
+                arr.push(city)
+            }
+        });
+
+        localStorage.cities = JSON.stringify(arr);
 
         this.emit('change-weather-data', {
             element: e.target.parentElement,
-            name: cityName
+            name: e.target.value.toLowerCase()
         });
     }
 
@@ -101,8 +123,6 @@ export class ViewCities extends EventEmitter {
 
         const tempValue = data.city.element.getElementsByClassName('city-weather-value')[0];
         tempValue.innerHTML = data.weather.main.temp + '&#xb0;C';
-
-        // Put in DB
     }
 
     showError = (msg = 'Wrong city name.') => {
@@ -115,20 +135,27 @@ export class ViewCities extends EventEmitter {
         this.error.innerText = '';
     }
 
+    changeError = (item) => {
+        item.element.classList.add('m-error')
+    }
+
     onResultClick = (e) => {
         if (e.target.classList.contains('city-weather-remove')) {
             var parent = e.target.parentElement;
             var itemTitle = parent.getElementsByClassName('city-weather-title')[0];
             var cityName = itemTitle.value.slice(0, itemTitle.value.indexOf(',')).toLowerCase();
 
-            this.citiesNames.splice(this.citiesNames.indexOf(cityName), 1);
+            let arr = [];
+            JSON.parse(localStorage.cities).forEach((city, i) => {
+                if (city.name.toLowerCase() !== cityName) {
+                    arr.push(city);
+                }
+            })
 
-            console.log(this.citiesNames);
+            localStorage.cities = JSON.stringify(arr);
 
             parent.remove();
             itemTitle.removeEventListener('blur', this.changeCity);
-
-            // remove from DB
         }
     }
 }
@@ -141,6 +168,14 @@ export class ModelCities extends EventEmitter {
 
         this.subscribe('get-weather-data', this.getCityWeather);
         this.subscribe('change-weather-data', this.changeCityWeather);
+        this.subscribe('update-local-storage', this.updateLocalStorage);
+
+        if (!localStorage.cities) {
+            localStorage.cities = JSON.stringify([]);
+        } else {
+            console.log(JSON.parse(localStorage.cities));
+            this.view.emit('add-cities', JSON.parse(localStorage.cities));
+        }
     }
 
     getCityWeather = (city) => {
@@ -171,10 +206,17 @@ export class ModelCities extends EventEmitter {
                         city: city,
                         weather: weather
                     });
+                    this.updateLocalStorage(weather);
                 } else if (this.xhttp.status === 404) {
-                    this.view.emit('change-error');
+                    this.view.emit('change-error', city);
                 }
             }
         }
+    }
+
+    updateLocalStorage = (data) => {
+        let arr = JSON.parse(localStorage.cities);
+        arr.push(data);
+        localStorage.cities = JSON.stringify(arr);
     }
 }
