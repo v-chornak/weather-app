@@ -1,0 +1,224 @@
+@import url('https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&family=Indie+Flower&display=swap');
+
+*,
+*::after,
+*::before {
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font: 400 24px 'Amatic SC', cursive;
+    display: flex;
+    min-height: 100vh;
+    padding: 40px;
+    background-image: url(../../images/bg1.jpg);
+    background-size: 400px;
+}
+
+
+.app {
+    max-width: 600px;
+    margin: auto;
+    width: 100%;
+    padding: 80px 40px;
+    background-image: url(../../images/bg2.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.app-mode {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 40px;
+    background-image: url(../../images/weather.gif);
+    background-position: 528px -344px;
+}
+
+.rain .app-mode {
+    background-position: 528px -165px;
+}
+
+.thunderstorm .app-mode {
+    background-position: 370px -165px;
+}
+
+.clear .app-mode {
+    background-position: 684px -165px;
+}
+
+.snow .app-mode {
+    background-position: 215px -344px;
+}
+
+.app-local,
+.app-cities {
+    max-width: 600px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.app-local {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* App form */
+.app-form {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.app-input {
+    background-color: transparent;
+    min-height: 50px;
+    width: 200px;
+    border: 0;
+    font: italic 700 26px 'Amatic SC', cursive;
+    border-bottom: 2px solid black;
+    color: blue;
+    outline: none;
+}
+
+.app-input:focus {
+    border-bottom-color: blue;
+}
+
+.app-input.m-error {
+    border-bottom-color: red;
+    color: red;
+}
+
+.app-btn.btn-add {
+    margin-left: -45px;
+    font: italic 700 50px Arial;
+    border: 0;
+    background: transparent;
+    height: 48px;
+    transform: skewX(-16deg) translateY(10px);
+    cursor: pointer;
+}
+
+.app-btn:hover {
+    text-shadow: 2px 2px 2px black;
+}
+
+.app-form-error {
+    display: block;
+    color: red;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+/* Local Weather */
+
+.local-weather-label,
+.city-weather-label {
+    margin-right: 10px;
+}
+
+.local-weather-value,
+.city-weather-value {
+    font-weight: 700;
+    text-decoration: underline;
+}
+
+/* Cities */
+.city-weather {
+    position: relative;
+    margin: 0 auto 20px;
+    padding: 0 80px;
+    max-width: 80%;
+}
+
+.city-weather::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    width: 50px;
+    height: 50px;
+    margin-top: -25px;
+    background-image: url(../../images/modes.png);
+    background-repeat: no-repeat;
+    background-position: -192px -94px;
+}
+
+.city-weather.clear::before {
+    background-position: 0 0;
+}
+
+.city-weather.rain::before {
+    background-position: -94px -94px;
+}
+
+.city-weathe.thunderstorm::before {
+    background-position: -572px -191px;
+}
+
+.city-weathe.snow::before {
+    background-position: -671px -382px;
+}
+
+.city-weather-title {
+    background-color: transparent;
+    background-image: url(../../images/edit-icon.png);
+    background-size: 23px;
+    background-position: 100%;
+    background-repeat: no-repeat;
+    border: 0;
+    border-bottom: 2px solid black;
+    outline: none;
+    padding-right: 40px;
+    height: 40px;
+    font: italic 700 20px 'Amatic SC', cursive;
+}
+
+.city-weather-title:focus {
+    color: blue;
+    border-bottom-color: blue;
+}
+
+.city-weather-remove {
+    position: absolute;
+    top: 50%;
+    right: 20px;
+    background-color: transparent;
+    border: 0;
+    font-size: 0;
+    transform: translateY(-50%);
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    background-image: url(../../images/remove-icon.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.city-weather-remove:hover {
+    box-shadow: 2px 2px 5px black;
+}
+
+@media screen and (max-width: 767px) {
+    body {
+        padding: 20px;
+    }
+
+    .app {
+        padding: 40px 20px;
+    }
+
+    .city-weather {
+        max-width: none;
+        padding: 0 60px;
+    }
+
+    .city-weather::before {
+        left: -10px;
+    }
+
+    .city-weather-remove {
+        right: -5px;
+    }
+}
