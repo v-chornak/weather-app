@@ -100,6 +100,7 @@ export class ViewCities extends EventEmitter {
 
     changeCityName = (e) => {
         let arr = [];
+        let isInStorage = false;
 
         e.target.parentElement.classList.remove('m-error');
 
@@ -107,9 +108,20 @@ export class ViewCities extends EventEmitter {
             if (city.name.toLowerCase() !== this.prevCityName) {
                 arr.push(city)
             }
+
+            if (city.name.toLowerCase() === e.target.value.toLowerCase()) {
+                isInStorage = true;
+            }
         });
 
         localStorage.cities = JSON.stringify(arr);
+
+        if (isInStorage) {
+            this.changeError({
+                element: e.target.parentElement
+            });
+            return;
+        }
 
         this.emit('change-weather-data', {
             element: e.target.parentElement,
@@ -146,7 +158,7 @@ export class ViewCities extends EventEmitter {
             var cityName = itemTitle.value.slice(0, itemTitle.value.indexOf(',')).toLowerCase();
 
             let arr = [];
-            JSON.parse(localStorage.cities).forEach((city, i) => {
+            JSON.parse(localStorage.cities).forEach((city) => {
                 if (city.name.toLowerCase() !== cityName) {
                     arr.push(city);
                 }
